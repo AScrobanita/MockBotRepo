@@ -18,7 +18,7 @@ namespace MockBotTest
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new Dialogs.Greeting());
+                await Conversation.SendAsync(activity, () => new MockBotTest.Dialogs.ReleaseBot());
             }
             else
             {

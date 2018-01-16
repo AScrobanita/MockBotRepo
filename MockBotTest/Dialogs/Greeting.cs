@@ -15,8 +15,25 @@ namespace MockBotTest.Dialogs
         {
 
             await context.PostAsync("Greetings are in order!!");
+            await Respond(context);
+
             context.Wait(MessageRecievedAsync);
 
+        }
+
+        public virtual async Task Respond (IDialogContext context)
+        {
+            var userName = String.Empty;
+            context.UserData.TryGetValue<string>("Name", out userName);
+            if (string.IsNullOrEmpty(userName))
+            {
+                await context.PostAsync("Give me your name!!");
+                context.UserData.SetValue<bool>("GetName", true);
+            }
+            else
+            {
+                await context.PostAsync(String.Format("Hi {0}. I'm glad to have you here. Any talk?", userName));
+            }
         }
 
         public virtual async Task MessageRecievedAsync(IDialogContext context, IAwaitable<Microsoft.Bot.Connector.IMessageActivity> argument)
@@ -33,18 +50,10 @@ namespace MockBotTest.Dialogs
                 context.UserData.SetValue<bool>("GetName", false);
             }
 
-            context.UserData.TryGetValue<string>("Name", out userName);
-            if(string.IsNullOrEmpty(userName))
-            {
-                await context.PostAsync("Give me your name!!");
-                context.UserData.SetValue<bool>("GetName", true);
-            }
-            else
-            {
-                await context.PostAsync(String.Format("Hi {0}. I'm glad to have you here. Any talk?", userName));
-            }
+            await Respond(context);
+            context.Done(message);
 
-            context.Wait(MessageRecievedAsync);
+            //context.Wait(MessageRecievedAsync);
             //throw new NotImplementedException();
         }
     }
