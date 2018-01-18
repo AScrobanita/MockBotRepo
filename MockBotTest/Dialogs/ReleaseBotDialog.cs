@@ -10,11 +10,11 @@ using MockBotTest.Models;
 
 namespace MockBotTest.Dialogs
 {
-    public class ReleaseBot
+    public class ReleaseBotDialog
     {
         public static readonly IDialog<string> dialog = Chain.PostToChain()
             .Select(msg => msg.Text)
-            .Switch(new RegexCase<IDialog<string>>(new .Regex("Hi", RegexOptions.IgnoreCase), (context, text) => {
+            .Switch(new RegexCase<IDialog<string>>(new Regex("Hi", RegexOptions.IgnoreCase), (context, text) => {
                 return Chain.ContinueWith(new Greeting(), AfterGreedingContinuation);
             }
             ),
@@ -24,8 +24,8 @@ namespace MockBotTest.Dialogs
             }))
             .Unwrap()
             .PostToUser();
-private async static Task<IDialog<string>> AfterGreedingContinuation(IBotContext context, IAwaitable<object> item)
-        {
+        private async static Task<IDialog<string>> AfterGreedingContinuation(IBotContext context, IAwaitable<object> item)
+            {
             var token = await item;
             var name = "User";
             context.UserData.TryGetValue<string>("name", out name);

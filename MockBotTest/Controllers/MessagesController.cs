@@ -1,9 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using MockBotTest.Dialogs;
+using MockBotTest.Models;
 
 namespace MockBotTest
 {
@@ -18,7 +21,7 @@ namespace MockBotTest
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new MockBotTest.Dialogs.ReleaseBot());
+                await Conversation.SendAsync(activity, MakeLuisDialog);
             }
             else
             {
@@ -26,6 +29,12 @@ namespace MockBotTest
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
+        }
+
+        private IDialog<ReleaseForm> MakeLuisDialog()
+        {
+            return Chain.From(() => new LUISDialog(ReleaseForm.BuildForm));
+            //throw new NotImplementedException();
         }
 
         private Activity HandleSystemMessage(Activity message)
